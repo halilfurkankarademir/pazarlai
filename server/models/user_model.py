@@ -1,8 +1,7 @@
 from extensions import db
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
-
-# User model for the application
+from datetime import datetime
 
 
 class User(db.Model):
@@ -13,7 +12,7 @@ class User(db.Model):
     name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
-    salt = db.Column(db.String(128), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):
         return {
@@ -22,5 +21,5 @@ class User(db.Model):
             "name": self.name,
             "email": self.email,
             "password": self.password,
-            "salt": self.salt
+            "created_at": self.created_at.isoformat() if self.created_at else None
         }
