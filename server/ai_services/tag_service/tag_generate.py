@@ -1,3 +1,4 @@
+from datetime import datetime
 import io
 import json
 import os
@@ -19,7 +20,8 @@ class TagGenerator:
         response=client.models.generate_content(
             model="gemini-2.5-pro",
             contents=[
-               f"""You are a social media content assistant. 
+               f"""You are a social media content assistant.
+               Today is {datetime.today().strftime('%B %d, %Y')}. Based on this date, include currently trending hashtags for Instagram, TikTok, and Pinterest that are relevant to lifestyle, outdoor, tech, or seasonal topics.
                Based on the following product description, generate strategic and aesthetically appealing hashtags to maximize engagement on platforms like Instagram, TikTok, and Pinterest. 
                Categorize the hashtags into three groups: (1) Popular and General Hashtags — broadly trending, high-discovery tags related to lifestyle, decor, fashion, or tech; 
                (2) Product-Specific and Style Hashtags — tags that reflect the item’s type, materials, function, and category; 
