@@ -1,5 +1,5 @@
 from fastapi import APIRouter, File, Query, UploadFile
-from ai_services.tag_service.tag_generate import TagGenerator
+from ai_services.tag_generator_service.tag_generate import TagGenerator
 tag_generator_router=APIRouter()
 
 @tag_generator_router.post("/tag-generator")
