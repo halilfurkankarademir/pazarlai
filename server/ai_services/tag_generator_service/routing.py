@@ -4,7 +4,7 @@ tag_generator_router=APIRouter()
 
 @tag_generator_router.post("/tag-generator")
 
-async def tag_generation(language:str=Query(default="türkçe"),
+async def tag_generation(language:str=Query(default="turkish"),
                             text:str=Query(...),
                             ):
 

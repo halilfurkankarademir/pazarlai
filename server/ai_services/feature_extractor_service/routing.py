@@ -4,7 +4,7 @@ from ai_services.feature_extractor_service.feature_extractor import FeatureExtra
 feature_extractor_router=APIRouter()
 
 @feature_extractor_router.post("/extract-feature")
-async def feature_extractor(language:str=Query(default="english"),
+async def feature_extractor(language:str=Query(default="turkish"),
                             image:UploadFile=File(...),
                             model:str=Query(default=" ")
                             ):
