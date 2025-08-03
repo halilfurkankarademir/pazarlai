@@ -1,3 +1,4 @@
+from datetime import datetime
 import io
 import os
 import re
@@ -21,13 +22,19 @@ class FeatureExtractor:
         image.save(byte_io,format="JPEG")
         byte_io.seek(0)
         
-        while 1:
+        max_attempts=5
+        attempts = 0
+        
+        while attempts < max_attempts:     
             try:
                 client=genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
                 
                 feature_extractor_prompt = pazarlai_prompts["feature_extractor_prompt"]
 
                 feature_extractor_prompt=feature_extractor_prompt.replace("[language]",language)
+                today=datetime.today().strftime('%B %d, %Y')
+
+                feature_extractor_prompt=feature_extractor_prompt.replace("[today]",today)
                             
                 if model:
                     feature_extractor_prompt += pazarlai_prompts["addition_model_prompt"].replace("[model]",model)
@@ -45,7 +52,8 @@ class FeatureExtractor:
                 json_str=response[start:end]
                 return {"features":json.loads(json_str)}
             except Exception as e:
-                time.sleep(5)
+                attempts+=1
+                time.sleep(2)
                 print(e)
                 print("deneme")
 
