@@ -6,7 +6,7 @@ from ai_services.marketing_description_service.analyze_image import ImageAnalyze
 analyze_image_router=APIRouter()
 
 @analyze_image_router.post("/analyze-image")
-async def image_analyzation(language:str=Query(default="english"),
+async def image_analyzation(language:str=Query(default="turkish"),
                             model:str=Query(default=""),
                             image:UploadFile=File(...),
                             ):

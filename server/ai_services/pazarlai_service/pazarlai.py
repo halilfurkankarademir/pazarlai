@@ -96,7 +96,7 @@ pazarlai_router = APIRouter()
 
 
 @pazarlai_router.post("/pazarlai")
-async def pazarlai_func(language: str = Query(default="english"),
+async def pazarlai_func(language: str = Query(default="turkish"),
                         model: str = Query(default=" "),
                         image: UploadFile = File(...)):
     image = await image.read()
