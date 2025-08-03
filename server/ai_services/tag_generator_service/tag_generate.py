@@ -17,17 +17,23 @@ class TagGenerator:
         load_dotenv()
         today=datetime.today().strftime('%B %d, %Y')
         tag_generator_prompt=pazarlai_prompts["tag_generator_prompt"].replace("[language]",language).replace("[text]",text).replace("[today]",today)
-  
-        client=genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
-        response=client.models.generate_content(
-            model="gemini-2.5-pro",
-            contents=[tag_generator_prompt])
+        client=genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))        
+        max_attempts=5
+        attempts = 0
         
-        response=response.text
-        print(response)
-        start=response.find('{')
-        end=response.rfind('}')+1
-        json_str=response[start:end]
-        print(json_str)
-        return {"tags":json.loads(json_str)}
+        while attempts < max_attempts:
+            try:       
+                response=client.models.generate_content(
+                    model="gemini-2.5-pro",
+                    contents=[tag_generator_prompt])
+                
+                response=response.text
+                print(response)
+                start=response.find('{')
+                end=response.rfind('}')+1
+                json_str=response[start:end]
+                print(json_str)
+                return {"tags":json.loads(json_str)}
+            except:
+                attempts+=1
 
