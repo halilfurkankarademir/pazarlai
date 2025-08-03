@@ -3,6 +3,7 @@ from routes import all_routes
 from config.cors import init_cors
 from config.database import init_database
 from config.jwt import init_jwt
+from config.cloudinary_config import init_cloudinary
 
 
 def create_app():
@@ -11,6 +12,7 @@ def create_app():
     init_cors(app)
     init_database(app)
     init_jwt(app)
+    init_cloudinary()
 
     for route in all_routes:
         app.register_blueprint(route)
