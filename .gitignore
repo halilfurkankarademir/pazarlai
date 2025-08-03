@@ -1,4 +1,11 @@
 .env
 node_modules/
 dist/
+.env
+node_modules/
+dist/
 ./server/newtxt
+__pycache__/
+*.pyc
+outputs
+ 
