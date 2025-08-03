@@ -1,13 +1,9 @@
 import io
 import os
-import re
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 from PIL import Image
-from flask_sqlalchemy import SQLAlchemy
-from models.image_model import Image as ImageModel
-from extensions import db
 from utils.helpers import upload_image
 
 
@@ -16,11 +12,10 @@ class ImageGeneration:
         pass
 
     @staticmethod
-    async def generate_image():
+    async def generate_image(image=None):
         load_dotenv()
 
-        with open("D:/react/btk-2025-mf304/server/assets/mustang.jpg", "rb") as f:
-            image = Image.open(io.BytesIO(f.read())).convert("RGB")
+        image = Image.open(io.BytesIO(image)).convert("RGB")
         byte_io = io.BytesIO()
         image.save(byte_io, format="JPEG")
         byte_io.seek(0)
@@ -40,22 +35,13 @@ class ImageGeneration:
             config=types.GenerateContentConfig(
                 response_modalities=['TEXT', 'IMAGE']))
         i = 0
+        generated_images = []
         for part in response.candidates[0].content.parts:
             if part.inline_data is not None:
                 image = Image.open(io.BytesIO((part.inline_data.data)))
                 uploaded_image = upload_image(image)
-                print(uploaded_image)
-                image.show()
+                generated_images.append(uploaded_image)
                 i += 1
             if i == 4:
                 break
-
-
-"""Using the provided product image, generate exactly 4 separate, high-quality, photorealistic images.
-The product's shape, angle, proportions, colors, and design must remain absolutely unchanged — no alterations of any kind to the product itself are allowed.
-Each image must place the unchanged product in a different, visually appealing, realistic lifestyle or environmental background that is clean, distinct, and suitable for showcasing the product in an e-commerce platform.
-These images are intended for online sale, so each setting must be attractive, professionally composed, and help maximize product appeal.
-Strictly do not add any text, logos, watermarks, effects, filters, or overlays.
-You must generate exactly 4 final images, each in a different background, and output each image as a separate file, containing only one image per file.
-Do not include any extra visuals, descriptions, or combined layouts.
-Only deliver the 4 separate images."""
+        return {"images": generated_images}

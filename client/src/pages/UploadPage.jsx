@@ -10,6 +10,7 @@ import {
 } from "react-icons/fi";
 import { AiOutlineRobot } from "react-icons/ai";
 import { Button } from "../components/ui";
+import { uploadImage } from "../api/ImageApi";
 
 const UploadPage = () => {
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -20,6 +21,7 @@ const UploadPage = () => {
     const [language, setLanguage] = useState("tr");
     const [brandModel, setBrandModel] = useState("");
     const [analysisResult, setAnalysisResult] = useState(null);
+    const [images, setImages] = useState([]);
 
     const fileInputRef = useRef(null);
 
@@ -99,12 +101,9 @@ const UploadPage = () => {
                 formData.append("brand_model", brandModel);
             }
 
-            // Mock API çağrısı - gerçek uygulamada backend endpoint'e istek atılacak
-            // const response = await fetch('/api/analyze-product', {
-            //     method: 'POST',
-            //     body: formData
-            // });
-            // const result = await response.json();
+            const response = await uploadImage(formData);
+
+            setImages(response.images);
 
             // Mock veri
             setTimeout(() => {
@@ -311,6 +310,30 @@ const UploadPage = () => {
                         </div>
 
                         <div className="space-y-6">
+                            {/* Generated Images */}
+                            {images.length > 0 && (
+                                <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/50">
+                                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+                                        <FiImage className="w-5 h-5 text-blue-400 mr-2" />
+                                        AI Tarafından Oluşturulan Görseller
+                                    </h3>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                                        {images.map((imgUrl, idx) => (
+                                            <div
+                                                key={idx}
+                                                className="relative group overflow-hidden rounded-xl border border-gray-700"
+                                            >
+                                                <img
+                                                    src={imgUrl}
+                                                    alt={`Generated ${idx + 1}`}
+                                                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Basic Info */}
                             <div className="grid gap-4">
                                 <div className="bg-gray-700/30 rounded-xl p-4">

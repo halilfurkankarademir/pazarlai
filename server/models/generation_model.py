@@ -1,5 +1,5 @@
 from extensions import db
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 
 
 class Generation(db.Model):
@@ -8,10 +8,7 @@ class Generation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey(
         'users.user_id'), nullable=False)
-    title = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.String(255), nullable=True)
-    category = db.Column(db.String(50), nullable=True)
-    price_suggestion = db.Column(db.Numeric(10, 2), nullable=True)
+    data = db.Column(JSONB, nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
     def to_dict(self):

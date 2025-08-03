@@ -1,15 +1,12 @@
 from flask import Blueprint, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from controllers.user_controller import get_current_user_controller
 
 user_routes_bp = Blueprint('user_routes', __name__, url_prefix='/api/users')
 
 
-@user_routes_bp.route('/', methods=['GET'])
-def get_users():
-    # This is a placeholder for the actual user retrieval logic
-    return jsonify({"message": "List of users"}), 200
-
-
 @user_routes_bp.route('/me', methods=['GET'])
+@jwt_required()
 def get_user_me():
-    # This is a placeholder for the actual user retrieval logic
-    return jsonify({"message": "User profile information"}), 200
+    user_id = get_jwt_identity()
+    return get_current_user_controller(user_id), 200

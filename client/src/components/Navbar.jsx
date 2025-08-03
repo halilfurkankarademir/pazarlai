@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
     FiMenu,
@@ -10,8 +10,10 @@ import {
 } from "react-icons/fi";
 import { logoutUser } from "../api/AuthApi";
 import { AuthContext } from "../contexts/AuthContext";
+import { getCurrentUser } from "../api/UserApi";
 
 const Navbar = () => {
+    const [user, setUser] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
     const { isLoggedIn, logout } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -27,6 +29,21 @@ const Navbar = () => {
             console.error("Logout error:", error);
         }
     };
+
+    const getData = async () => {
+        try {
+            const user = await getCurrentUser();
+            setUser(user);
+        } catch (error) {
+            console.error("Logout error:", error);
+        }
+    };
+
+    useEffect(() => {
+        if (!isLoggedIn) return;
+
+        getData();
+    }, [isLoggedIn]);
 
     return (
         <nav className="bg-neutral-900/95 backdrop-blur-lg border-b border-gray-800/50 sticky top-0 z-50">
@@ -89,8 +106,8 @@ const Navbar = () => {
                         ) : (
                             <div className="flex items-center space-x-3">
                                 <div className="flex items-center space-x-2 px-3 py-2 rounded-lg ">
-                                    <span className="text-md text-gray-300">
-                                        Kullanıcı
+                                    <span className="text-lg text-gray-300 font-semibold">
+                                        {user?.name}
                                     </span>
                                 </div>
                                 <button
@@ -98,7 +115,7 @@ const Navbar = () => {
                                     className="cursor-pointer flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-red-600/20 transition-all duration-200 text-sm"
                                 >
                                     <FiLogOut className="w-4 h-4" />
-                                    <span className="text-md">Çıkış</span>
+                                    <span className="text-lg">Çıkış</span>
                                 </button>
                             </div>
                         )}
@@ -186,10 +203,10 @@ const Navbar = () => {
                                     <div className="flex items-center space-x-3 px-3 py-3 rounded-lg bg-gray-800/50 mb-2">
                                         <div>
                                             <div className="text-white font-medium">
-                                                Kullanıcı
+                                                {user?.name}
                                             </div>
                                             <div className="text-gray-400 text-xs">
-                                                user@example.com
+                                                {user?.email}
                                             </div>
                                         </div>
                                     </div>
