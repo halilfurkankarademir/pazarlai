@@ -1,6 +1,14 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FiLock, FiMail, FiLogIn } from "react-icons/fi";
+import {
+    FiLock,
+    FiMail,
+    FiLogIn,
+    FiUpload,
+    FiEye,
+    FiEyeOff,
+    FiArrowRight,
+} from "react-icons/fi";
 import { loginUser } from "../api/AuthApi";
 import { AuthContext } from "../contexts/AuthContext";
 
@@ -11,10 +19,9 @@ const LoginPage = () => {
     });
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
-    const [rememberMe, setRememberMe] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const navigate = useNavigate();
-
     const { login } = useContext(AuthContext);
 
     const handleChange = (e) => {
@@ -23,134 +30,175 @@ const LoginPage = () => {
             ...formData,
             [name]: value,
         });
+        // Clear error when user starts typing
+        if (errors[name]) {
+            setErrors({ ...errors, [name]: "" });
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
+        setErrors({});
+
         try {
             const response = await loginUser(formData);
-            console.log(response);
             if (response.status === "success") {
                 localStorage.setItem("isLoggedIn", "true");
                 login(response.user);
-                navigate("/");
+                navigate("/products");
             } else {
                 setErrors({ submit: "Geçersiz e-posta veya şifre" });
             }
         } catch (error) {
             console.error("Giriş hatası:", error);
-            setErrors({ submit: "Geçersiz e-posta veya şifre" });
+            setErrors({ submit: "Giriş yapılırken bir hata oluştu" });
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-4">
-            <div className="w-full max-w-md bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-700">
-                {/* Başlık Kısmı */}
-                <div className="bg-gradient-to-r from-indigo-900 to-purple-900 py-8 px-8 text-center">
-                    <h1 className="text-3xl font-bold text-white">
-                        Satış Asistanı AI'ya giriş yap
+        <div className="min-h-screen bg-gradient-to-b from-neutral-900 to-neutral-800 flex justify-center p-4 lg:p-16">
+            <div className="w-full max-w-md">
+                {/* Header */}
+                <div className="text-center mb-8">
+                    <h1 className="text-5xl font-bold text-white mb-2">
+                        <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                            Giriş Yap
+                        </span>
                     </h1>
                 </div>
 
-                {/* Form Kısmı */}
-                <form onSubmit={handleSubmit} className="p-8 space-y-6">
-                    {/* Email Alanı */}
-                    <div>
-                        <label
-                            htmlFor="email"
-                            className="block text-sm font-medium text-gray-300 mb-2"
-                        >
-                            E-posta Adresin
-                        </label>
-                        <div className="relative rounded-md shadow-sm">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <FiMail className="h-5 w-5 text-gray-400" />
+                {/* Login Form */}
+                <div className="bg-neutral-800/50 backdrop-blur-lg rounded-3xl border border-gray-700/50 p-8 shadow-2xl">
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* Email Field */}
+                        <div>
+                            <label
+                                htmlFor="email"
+                                className="block text-sm font-medium text-gray-300 mb-2"
+                            >
+                                E-posta Adresiniz
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <FiMail className="h-5 w-5 text-gray-400" />
+                                </div>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    className={`block w-full pl-10 pr-3 py-4 rounded-xl border bg-neutral-700/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200 text-lg ${
+                                        errors.email
+                                            ? "border-red-500"
+                                            : "border-gray-600"
+                                    }`}
+                                    placeholder="ornek@email.com"
+                                    required
+                                />
                             </div>
-                            <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                className={`block w-full pl-10 pr-3 py-3 rounded-lg border bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                                    errors.email
-                                        ? "border-red-500"
-                                        : "border-gray-600 focus:border-indigo-500"
-                                }`}
-                                placeholder="ornek@email.com"
-                            />
+                            {errors.email && (
+                                <p className="mt-2 text-sm text-red-400">
+                                    {errors.email}
+                                </p>
+                            )}
                         </div>
-                        {errors.email && (
-                            <p className="mt-1 text-sm text-red-400">
-                                {errors.email}
-                            </p>
-                        )}
-                    </div>
 
-                    {/* Şifre Alanı */}
-                    <div>
-                        <label
-                            htmlFor="password"
-                            className="block text-sm font-medium text-gray-300 mb-2"
-                        >
-                            Şifren
-                        </label>
-                        <div className="relative rounded-md shadow-sm">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <FiLock className="h-5 w-5 text-gray-400" />
+                        {/* Password Field */}
+                        <div>
+                            <label
+                                htmlFor="password"
+                                className="block text-sm font-medium text-gray-300 mb-2"
+                            >
+                                Şifreniz
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <FiLock className="h-5 w-5 text-gray-400" />
+                                </div>
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    id="password"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    className={`block w-full pl-10 pr-12 py-4 rounded-xl border bg-neutral-700/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-200 text-lg ${
+                                        errors.password
+                                            ? "border-red-500"
+                                            : "border-gray-600"
+                                    }`}
+                                    placeholder="••••••••"
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setShowPassword(!showPassword)
+                                    }
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-200 transition-colors"
+                                >
+                                    {showPassword ? (
+                                        <FiEyeOff className="h-5 w-5" />
+                                    ) : (
+                                        <FiEye className="h-5 w-5" />
+                                    )}
+                                </button>
                             </div>
-                            <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                className={`block w-full pl-10 pr-3 py-3 rounded-lg border bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-                                    errors.password
-                                        ? "border-red-500"
-                                        : "border-gray-600 focus:border-indigo-500"
-                                }`}
-                                placeholder="••••••••"
-                            />
+                            {errors.password && (
+                                <p className="mt-2 text-sm text-red-400">
+                                    {errors.password}
+                                </p>
+                            )}
                         </div>
-                        {errors.password && (
-                            <p className="mt-1 text-sm text-red-400">
-                                {errors.password}
-                            </p>
+
+                        {/* Error Message */}
+                        {errors.submit && (
+                            <div className="bg-red-600/10 border border-red-500/20 rounded-xl p-4">
+                                <p className="text-sm text-red-400 text-center">
+                                    {errors.submit}
+                                </p>
+                            </div>
                         )}
-                    </div>
 
-                    {/* Giriş Butonu */}
-                    <button
-                        type="submit"
-                        disabled={isLoading}
-                        className={`w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
-                            isLoading
-                                ? "bg-indigo-700 cursor-not-allowed"
-                                : "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
-                        }`}
-                        onClick={handleSubmit}
-                    >
-                        <FiLogIn className="mr-2 w-5 h-5" />
-                        {isLoading ? "Giriş Yapılıyor..." : "Giriş Yap"}
-                    </button>
-                </form>
-
-                {/* Kayıt Ol Linki */}
-                <div className="px-8 pb-8 text-center">
-                    <p className="text-sm text-gray-400">
-                        Hesabın yok mu?{" "}
-                        <Link
-                            to="/register"
-                            className="font-medium text-indigo-400 hover:text-indigo-300"
+                        {/* Login Button */}
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className={`w-full flex justify-center items-center py-4 px-6 rounded-xl font-semibold text-white text-lg transition-all duration-300 transform ${
+                                isLoading
+                                    ? "bg-gray-600 cursor-not-allowed"
+                                    : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 hover:scale-105 active:scale-95"
+                            }`}
                         >
-                            Hemen kayıt ol
-                        </Link>
-                    </p>
+                            {isLoading ? (
+                                <>
+                                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                                    Giriş Yapılıyor...
+                                </>
+                            ) : (
+                                <>
+                                    <FiLogIn className="mr-2 w-5 h-5" />
+                                    Giriş Yap
+                                </>
+                            )}
+                        </button>
+                    </form>
+
+                    {/* Register Link */}
+                    <div className="mt-8 pt-6 border-t border-gray-700/50 text-center">
+                        <p className="text-gray-400">
+                            Hesabınız yok mu?{" "}
+                            <Link
+                                to="/register"
+                                className="font-semibold text-blue-400 hover:text-blue-300 transition-colors"
+                            >
+                                Kayıt Ol
+                            </Link>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

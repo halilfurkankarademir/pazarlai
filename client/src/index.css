@@ -1,6 +1,38 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import "tailwindcss";
 
+@font-face {
+    font-family: "Cream";
+    src: url("./assets/fonts/cream.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+}
+
+body {
+    background: linear-gradient(to bottom, #171717, #262626);
+}
+
 * {
     font-family: "Poppins", sans-serif;
+}
+
+/* tailwind.config.css veya global.css içine */
+.nav-link {
+    @apply text-gray-300 hover:text-white text-sm transition-colors duration-200;
+}
+
+.btn-primary {
+    @apply bg-gradient-to-r from-blue-600 to-purple-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:from-blue-700 hover:to-purple-700 transition-transform hover:scale-105;
+}
+
+.btn-outline {
+    @apply text-gray-300 border border-gray-600 hover:text-white hover:border-gray-400 px-3 py-1 rounded text-sm transition;
+}
+
+.mobile-link {
+    @apply block text-gray-300 hover:text-white text-base py-2 transition;
+}
+
+.mobile-btn {
+    @apply block text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-md text-base mt-2 transition hover:scale-105;
 }

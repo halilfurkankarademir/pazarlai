@@ -1,11 +1,19 @@
-import { useState, useContext } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { FiMenu, FiX, FiUser, FiImage, FiList, FiLogOut } from "react-icons/fi";
-import { AiOutlineRobot } from "react-icons/ai";
+import { useState, useContext, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+    FiMenu,
+    FiX,
+    FiLogOut,
+    FiUpload,
+    FiGrid,
+    FiArrowRight,
+} from "react-icons/fi";
 import { logoutUser } from "../api/AuthApi";
 import { AuthContext } from "../contexts/AuthContext";
+import { getCurrentUser } from "../api/UserApi";
 
 const Navbar = () => {
+    const [user, setUser] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
     const { isLoggedIn, logout } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -22,132 +30,196 @@ const Navbar = () => {
         }
     };
 
-    return (
-        <nav className="bg-gray-900 border-b border-gray-800 shadow-lg">
-            <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-16">
-                    {/* Logo - Her zaman gözükecek */}
-                    <div className="flex items-center">
-                        <Link
-                            to={isLoggedIn ? "/upload" : "/"}
-                            className="flex-shrink-0 flex items-center"
-                        >
-                            <AiOutlineRobot className="h-8 w-8 text-indigo-500" />
-                            <span className="ml-2 text-xl font-bold text-white hidden md:block">
-                                Satış Asistanı AI
-                            </span>
-                        </Link>
+    const getData = async () => {
+        try {
+            const user = await getCurrentUser();
+            setUser(user);
+        } catch (error) {
+            console.error("Logout error:", error);
+        }
+    };
 
-                        {/* Giriş yapılmışsa gösterilecek kısım */}
-                        {isLoggedIn && (
+    useEffect(() => {
+        if (!isLoggedIn) return;
+
+        getData();
+    }, [isLoggedIn]);
+
+    return (
+        <nav className="bg-neutral-900/95 backdrop-blur-lg border-b border-gray-800/50 sticky top-0 z-50">
+            <div className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-16 py-2">
+                <div className="flex items-center justify-between h-16">
+                    {/* Logo */}
+                    <div className="flex items-center gap-12">
+                        <Link
+                            to="/"
+                            className="flex items-center space-x-2 group"
+                        >
+                            <div className="flex flex-row gap-2 justify-center items-center">
+                                <span className="text-xl lg:text-4xl font-bold text-white">
+                                    pazarlai
+                                </span>
+                            </div>
+                        </Link>
+                        <div className="hidden md:flex items-center space-x-1">
+                            {isLoggedIn && (
+                                <>
+                                    <Link
+                                        to="/products"
+                                        className="flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-neutral-600/50 transition-all duration-200 text-md font-medium"
+                                    >
+                                        <FiGrid className="w-4 h-4" />
+                                        <span>Ürünlerim</span>
+                                    </Link>
+                                    <Link
+                                        to="/upload"
+                                        className="flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-neutral-600/50 transition-all duration-200 text-md font-medium"
+                                    >
+                                        <FiUpload className="w-4 h-4" />
+                                        <span>Ürün Yükle</span>
+                                    </Link>
+                                </>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Desktop Navigation Logged in */}
+
+                    {/* Right Side - Auth Buttons */}
+                    <div className="hidden md:flex items-center space-x-3">
+                        {!isLoggedIn ? (
                             <>
-                                <div className="hidden md:block ml-10">
-                                    <div className="flex space-x-4">
-                                        <NavLink
-                                            to="/upload"
-                                            className="text-gray-300 hover:bg-gray-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center"
-                                            activeClassName="bg-gray-800 text-white"
-                                        >
-                                            <FiImage className="mr-1" /> Ürün
-                                            Yükle
-                                        </NavLink>
-                                        <NavLink
-                                            to="/products"
-                                            className="text-gray-300 hover:bg-gray-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center"
-                                            activeClassName="bg-gray-800 text-white"
-                                        >
-                                            <FiList className="mr-1" />{" "}
-                                            Ürünlerim
-                                        </NavLink>
-                                    </div>
-                                </div>
+                                <Link
+                                    to="/login"
+                                    className="text-gray-300 hover:text-white px-4 py-2 text-md font-medium transition-colors duration-200"
+                                >
+                                    Giriş Yap
+                                </Link>
+                                <Link
+                                    to="/register"
+                                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg text-md font-semibold transition-all duration-300 transform hover:scale-105 flex items-center space-x-2"
+                                >
+                                    <span>Hemen Başla</span>
+                                    <FiArrowRight className="w-4 h-4" />
+                                </Link>
                             </>
+                        ) : (
+                            <div className="flex items-center space-x-3">
+                                <div className="flex items-center space-x-2 px-3 py-2 rounded-lg ">
+                                    <span className="text-lg text-gray-300 font-semibold">
+                                        {user?.name}
+                                    </span>
+                                </div>
+                                <button
+                                    onClick={handleLogout}
+                                    className="cursor-pointer flex items-center space-x-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-red-600/20 transition-all duration-200 text-sm"
+                                >
+                                    <FiLogOut className="w-4 h-4" />
+                                    <span className="text-lg">Çıkış</span>
+                                </button>
+                            </div>
                         )}
                     </div>
 
-                    {/* Giriş yapılmışsa gösterilecek kısım */}
-                    {isLoggedIn && (
-                        <div className="hidden md:block">
-                            <div className="ml-4 flex items-center md:ml-6">
-                                <div className="ml-3 relative">
-                                    <div className="flex items-center space-x-4">
-                                        <p className="text-white">
-                                            Kullanıcı Adı
-                                        </p>
-                                        <button
-                                            className="cursor-pointer text-gray-300 hover:bg-gray-800 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center"
-                                            onClick={handleLogout}
-                                        >
-                                            <FiLogOut className="mr-1" /> Çıkış
-                                            Yap
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Mobile menu button - Giriş yapılmışsa göster */}
-                    {isLoggedIn && (
-                        <div className="-mr-2 flex md:hidden">
-                            <button
-                                onClick={() => setIsOpen(!isOpen)}
-                                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none"
-                            >
-                                {isOpen ? (
-                                    <FiX className="block h-6 w-6" />
-                                ) : (
-                                    <FiMenu className="block h-6 w-6" />
-                                )}
-                            </button>
-                        </div>
-                    )}
+                    {/* Mobile menu button */}
+                    <div className="md:hidden">
+                        <button
+                            onClick={() => setIsOpen(!isOpen)}
+                            className="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800/50 transition-all duration-200"
+                        >
+                            {isOpen ? (
+                                <FiX className="w-5 h-5" />
+                            ) : (
+                                <FiMenu className="w-5 h-5" />
+                            )}
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            {/* Mobile menu - Giriş yapılmışsa göster */}
-            {isLoggedIn && isOpen && (
-                <div className="md:hidden bg-gray-900 border-t border-gray-800">
-                    <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                        <NavLink
-                            to="/upload"
-                            className="text-gray-300 hover:bg-gray-800 hover:text-white px-3 py-2 rounded-md text-base font-medium flex items-center"
-                            activeClassName="bg-gray-800 text-white"
-                            onClick={() => setIsOpen(false)}
-                        >
-                            <FiImage className="mr-2" /> Ürün Yükle
-                        </NavLink>
-                        <NavLink
-                            to="/products"
-                            className="text-gray-300 hover:bg-gray-800 hover:text-white px-3 py-2 rounded-md text-base font-medium flex items-center"
-                            activeClassName="bg-gray-800 text-white"
-                            onClick={() => setIsOpen(false)}
-                        >
-                            <FiList className="mr-2" /> Ürünlerim
-                        </NavLink>
-                    </div>
-                    <div className="pt-4 pb-3 border-t border-gray-800">
-                        <div className="flex items-center px-5">
-                            <div className="flex-shrink-0">
-                                <FiUser className="h-10 w-10 rounded-full text-indigo-400" />
-                            </div>
-                            <div className="ml-3">
-                                <div className="text-base font-medium text-white">
-                                    Kullanıcı Adı
+            {/* Mobile menu */}
+            {isOpen && (
+                <div className="md:hidden bg-neutral-900/98 backdrop-blur-lg border-t border-gray-800/50">
+                    <div className="px-4 py-3 space-y-1">
+                        {!isLoggedIn ? (
+                            <>
+                                {navigationItems.map((item) => {
+                                    const Icon = item.icon;
+                                    return (
+                                        <Link
+                                            key={item.name}
+                                            to={item.href}
+                                            className="flex items-center space-x-3 px-3 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800/50 transition-all duration-200"
+                                            onClick={() => setIsOpen(false)}
+                                        >
+                                            <Icon className="w-5 h-5" />
+                                            <span className="font-medium">
+                                                {item.name}
+                                            </span>
+                                        </Link>
+                                    );
+                                })}
+                                <div className="pt-4 border-t border-gray-800/50 space-y-2">
+                                    <Link
+                                        to="/login"
+                                        className="block px-3 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800/50 transition-all duration-200 text-center"
+                                        onClick={() => setIsOpen(false)}
+                                    >
+                                        Giriş Yap
+                                    </Link>
+                                    <Link
+                                        to="/register"
+                                        className="flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-3 py-3 rounded-lg font-semibold"
+                                        onClick={() => setIsOpen(false)}
+                                    >
+                                        <span>Hemen Başla</span>
+                                        <FiArrowRight className="w-4 h-4" />
+                                    </Link>
                                 </div>
-                                <div className="text-sm font-medium text-gray-400">
-                                    user@example.com
+                            </>
+                        ) : (
+                            <>
+                                <Link
+                                    to="/upload"
+                                    className="flex items-center space-x-3 px-3 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800/50 transition-all duration-200"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    <FiUpload className="w-5 h-5" />
+                                    <span className="font-medium">
+                                        Ürün Yükle
+                                    </span>
+                                </Link>
+                                <Link
+                                    to="/products"
+                                    className="flex items-center space-x-3 px-3 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800/50 transition-all duration-200"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    <FiGrid className="w-5 h-5" />
+                                    <span className="font-medium">
+                                        Ürünlerim
+                                    </span>
+                                </Link>
+                                <div className="pt-4 border-t border-gray-800/50">
+                                    <div className="flex items-center space-x-3 px-3 py-3 rounded-lg bg-gray-800/50 mb-2">
+                                        <div>
+                                            <div className="text-white font-medium">
+                                                {user?.name}
+                                            </div>
+                                            <div className="text-gray-400 text-xs">
+                                                {user?.email}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="w-full flex items-center justify-center space-x-2 px-3 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-red-600/20 transition-all duration-200"
+                                    >
+                                        <FiLogOut className="w-5 h-5" />
+                                        <span>Çıkış Yap</span>
+                                    </button>
                                 </div>
-                            </div>
-                        </div>
-                        <div className="mt-3 px-2 space-y-1">
-                            <button
-                                className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-800 flex items-center"
-                                onClick={handleLogout}
-                            >
-                                <FiLogOut className="mr-2" /> Çıkış Yap
-                            </button>
-                        </div>
+                            </>
+                        )}
                     </div>
                 </div>
             )}
