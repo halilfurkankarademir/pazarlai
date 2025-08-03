@@ -13,8 +13,8 @@ async def image_analyzation(image:UploadFile=File(...)):
 
     image=await image.read()
     
-    image_analyzation= await ImageGeneration().get_images(image=image)
-    return "success"
+    images= await ImageGeneration().get_images(image=image)
+    return images
     """
     OUTPUTS_FOLDER="outputs"
 
