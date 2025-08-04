@@ -57,7 +57,7 @@ class Pazarlai:
         ) as response:
             response_data = await response.json()
 
-        return {"product_features": response_data.get("features")}
+        return response_data
 
     async def _call_image_generation_service_api(self, image_bytes: bytes) -> dict:
         data = aiohttp.FormData()
@@ -69,7 +69,7 @@ class Pazarlai:
         ) as response:
             response_data=await response.json()
 
-        return {"images":response_data}
+        return response_data
             # content_type = response.headers.get('Content-Type', '')
             # if response.status == 200 and 'application/zip' in content_type:
             #     return await response.read()
@@ -84,11 +84,13 @@ class Pazarlai:
         ]
 
         results = await asyncio.gather(*tasks, return_exceptions=True)
-
+        print(results[0],
+             results[1],
+             results[2])
         return {
-            "marketing_data": results[0],
-            "features": results[1],
-            "generated_images": results[2]
+             "marketing_description_and_tag":results[0],
+             "features":results[1],
+             "images":results[2]
         }
 
 
@@ -99,6 +101,7 @@ pazarlai_router = APIRouter()
 async def pazarlai_func(language: str = Query(default="turkish"),
                         model: str = Query(default=" "),
                         image: UploadFile = File(...)):
+    
     image = await image.read()
 
     for attempt in range(3):
@@ -109,11 +112,13 @@ async def pazarlai_func(language: str = Query(default="turkish"),
                     model=model,
                     image_bytes=image
                 )
-
-                return result
+                
+            return result
+            #if not result.get("marketing_data") or not result.get()
+             #   return result
         except:
             print(f"başarısız {attempt}")
-            time.sleep(2**attempt)
+            await asyncio.sleep(2**attempt)
 
 
 

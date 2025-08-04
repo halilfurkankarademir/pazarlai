@@ -35,7 +35,9 @@ class ImageAnalyze:
         attempts = 0
         
         while attempts < max_attempts:
-            try:  
+            try: 
+                byte_io.seek(0) 
+                print("istek geldi")
                 client=genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
                 response=client.models.generate_content(
                     model="gemini-2.5-pro",
@@ -45,8 +47,9 @@ class ImageAnalyze:
                     ),marketing_prompt])
 
                 clean_text=ImageAnalyze._clean_markdown(response.text)
-
+                print(clean_text)
                 return {"explanation":clean_text}
-            except:
+            except Exception as e:
+                print(f"hata:{e}")
                 attempts+=1
 

@@ -8,3 +8,4 @@ dist/
 __pycache__/
 *.pyc
 outputs
+server/ai_services/__pycache__
