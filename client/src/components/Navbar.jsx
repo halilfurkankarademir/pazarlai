@@ -56,7 +56,10 @@ const Navbar = () => {
                             className="flex items-center space-x-2 group"
                         >
                             <div className="flex flex-row gap-2 justify-center items-center">
-                                <span className="text-xl lg:text-4xl font-bold text-white">
+                                <span
+                                    className="text-xl lg:text-4xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500"
+                                    style={{ fontFamily: "Cream" }}
+                                >
                                     pazarlai
                                 </span>
                             </div>
@@ -106,7 +109,7 @@ const Navbar = () => {
                         ) : (
                             <div className="flex items-center space-x-3">
                                 <div className="flex items-center space-x-2 px-3 py-2 rounded-lg ">
-                                    <span className="text-lg text-gray-300 font-semibold">
+                                    <span className="text-md text-gray-300 ">
                                         {user?.name}
                                     </span>
                                 </div>
@@ -143,22 +146,6 @@ const Navbar = () => {
                     <div className="px-4 py-3 space-y-1">
                         {!isLoggedIn ? (
                             <>
-                                {navigationItems.map((item) => {
-                                    const Icon = item.icon;
-                                    return (
-                                        <Link
-                                            key={item.name}
-                                            to={item.href}
-                                            className="flex items-center space-x-3 px-3 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-gray-800/50 transition-all duration-200"
-                                            onClick={() => setIsOpen(false)}
-                                        >
-                                            <Icon className="w-5 h-5" />
-                                            <span className="font-medium">
-                                                {item.name}
-                                            </span>
-                                        </Link>
-                                    );
-                                })}
                                 <div className="pt-4 border-t border-gray-800/50 space-y-2">
                                     <Link
                                         to="/login"

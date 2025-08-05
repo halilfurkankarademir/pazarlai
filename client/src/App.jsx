@@ -11,8 +11,10 @@ import UploadPage from "./pages/UploadPage";
 import { AuthProvider, AuthContext } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import ProductsPage from "./pages/ProductsPage";
 import ProductDetailsPage from "./pages/ProductDetailsPage";
+import { ToastContainer, toast } from "react-toastify";
 
 const MainRoute = () => {
     const { isLoggedIn, isLoading } = useContext(AuthContext);
@@ -34,7 +36,7 @@ const App = () => {
                         <Route path="/upload" element={<UploadPage />} />
                         <Route path="/products" element={<ProductsPage />} />
                         <Route
-                            path="/product-detail"
+                            path="/product-detail/:id"
                             element={<ProductDetailsPage />}
                         />
                     </Route>
@@ -47,7 +49,9 @@ const App = () => {
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                 </Routes>
+                {/* <Footer /> */}
             </BrowserRouter>
+            <ToastContainer />
         </AuthProvider>
     );
 };

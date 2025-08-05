@@ -1,25 +1,24 @@
-from extensions import db
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
+from extensions import Base
 import uuid
 from datetime import datetime
 
 
-class User(db.Model):
+class User(Base):
     __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(UUID(as_uuid=True), default=uuid.uuid4,
-                        unique=True, nullable=False)
-    name = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(PG_UUID(as_uuid=True), default=uuid.uuid4,
+                     unique=True, nullable=False)
+    name = Column(String(50), nullable=False)
+    email = Column(String(120), unique=True, nullable=False)
+    password = Column(String(200), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
     def to_dict(self):
         return {
-            "id": self.id,
             "user_id": str(self.user_id),
             "name": self.name,
             "email": self.email,
-            "password": self.password,
-            "created_at": self.created_at.isoformat() if self.created_at else None
         }

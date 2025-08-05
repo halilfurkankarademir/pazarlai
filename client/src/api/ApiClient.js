@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const ApiClient = axios.create({
+export const UserApiClient = axios.create({
     baseURL: "http://localhost:5000/api",
     headers: {
         "Content-Type": "application/json",
@@ -8,4 +8,9 @@ const ApiClient = axios.create({
     withCredentials: true,
 });
 
-export default ApiClient;
+export const ImageApiClient = axios.create({
+    baseURL: "http://127.0.0.1:8000",
+    headers: {
+        "Content-Type": "multipart/form-data",
+    },
+});

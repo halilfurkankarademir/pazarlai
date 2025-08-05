@@ -1,67 +1,85 @@
-from models import User
+from models.user_model import User
 from utils.helpers import hash_password, check_hashed_password
-from extensions import db
-from flask_jwt_extended import create_access_token, create_refresh_token, set_access_cookies, set_refresh_cookies, get_jwt, get_jwt_identity, unset_jwt_cookies
+from flask_jwt_extended import (
+    create_access_token, create_refresh_token,
+    set_access_cookies, set_refresh_cookies,
+    get_jwt, get_jwt_identity, unset_jwt_cookies
+)
 from flask import jsonify
 from datetime import timedelta
+
+from config.database import SessionLocal
 
 
 class AuthService:
     def login_user(self, email, password):
-        user = User.query.filter_by(email=email).first()
+        db = SessionLocal()
+        try:
+            user = db.query(User).filter(User.email == email).first()
+            if not user or not check_hashed_password(password, user.password):
+                raise ValueError("Invalid email or password")
 
-        if not user or not check_hashed_password(password, user.password):
-            raise ValueError("Invalid email or password")
+            access_token = create_access_token(
+                identity=user.user_id, expires_delta=timedelta(days=1))
+            refresh_token = create_refresh_token(
+                identity=user.user_id, expires_delta=timedelta(days=7))
 
-        access_token = create_access_token(
-            identity=user.user_id, expires_delta=timedelta(days=1))
-        refresh_token = create_refresh_token(
-            identity=user.user_id, expires_delta=timedelta(days=7))
+            response = jsonify({
+                "status": "success",
+                "user": user.to_dict(),
+                "message": "Login successful"
+            })
 
-        response = jsonify({
-            "status": "success",
-            "user": user.to_dict(),
-            "message": "Login successful"
-        })
+            set_access_cookies(response, access_token)
+            set_refresh_cookies(response, refresh_token)
 
-        set_access_cookies(response, access_token)
-        set_refresh_cookies(response, refresh_token)
-
-        return response
+            return response
+        finally:
+            db.close()
 
     def register_user(self, name, email, password):
         if not name or not email or not password:
             raise ValueError("Name, email, and password are required")
-        # Check if email already exists
-        if User.query.filter_by(email=email).first():
-            return None
 
-        hashed_password = hash_password(password)
-        new_user = User(name=name, email=email, password=hashed_password)
-
-        access_token = create_access_token(
-            identity=new_user.user_id, expires_delta=timedelta(days=1))
-        refresh_token = create_refresh_token(
-            identity=new_user.user_id, expires_delta=timedelta(days=7))
-
-        response = jsonify(
-            {"status": "success", "message": "User registered successfully"})
-
-        set_access_cookies(response, access_token)
-        set_refresh_cookies(response, refresh_token)
-
+        db = SessionLocal()
         try:
-            db.session.add(new_user)
-            db.session.commit()
+            # Email kontrolü
+            if db.query(User).filter(User.email == email).first():
+                return None  # Ya da uygun hata döndür
+
+            hashed_password = hash_password(password)
+            new_user = User(name=name, email=email, password=hashed_password)
+
+            db.add(new_user)
+            db.commit()
+            db.refresh(new_user)
+
+            access_token = create_access_token(
+                identity=new_user.user_id, expires_delta=timedelta(days=1))
+            refresh_token = create_refresh_token(
+                identity=new_user.user_id, expires_delta=timedelta(days=7))
+
+            response = jsonify({
+                "status": "success",
+                "message": "User registered successfully"
+            })
+
+            set_access_cookies(response, access_token)
+            set_refresh_cookies(response, refresh_token)
+
             return response
         except Exception as e:
-            db.session.rollback()
+            db.rollback()
             print(f"Error during user registration: {e}")
             return None
+        finally:
+            db.close()
 
     def logout_user(self):
-        response = jsonify(
-            {"status": "success", "message": "User logged out successfully"})
+        response = jsonify({
+            "status": "success",
+            "message": "User logged out successfully"
+        })
         unset_jwt_cookies(response)
         return response
 
