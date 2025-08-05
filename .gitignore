@@ -9,3 +9,5 @@ __pycache__/
 *.pyc
 outputs
 myenv
+server/ai_services/__pycache__
+

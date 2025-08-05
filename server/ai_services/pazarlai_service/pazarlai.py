@@ -80,11 +80,13 @@ class Pazarlai:
             response_data = await response.json()
 
         return response_data
+
         # content_type = response.headers.get('Content-Type', '')
         # if response.status == 200 and 'application/zip' in content_type:
         #     return await response.read()
         # else:
         #     raise ValueError("ZIP dosyası oluşturulamadı")
+
 
     async def process_all_service(self, image_bytes: bytes, language: str, model: str):
         tasks = [
@@ -97,12 +99,12 @@ class Pazarlai:
 
         results = await asyncio.gather(*tasks, return_exceptions=True)
         print(results[0],
-              results[1],
-              results[2])
+             results[1],
+             results[2])
         return {
-            "marketing_description_and_tag": results[0],
-            "features": results[1],
-            "images": results[2]
+             "marketing_description_and_tag":results[0],
+             "features":results[1],
+             "images":results[2]
         }
 
 

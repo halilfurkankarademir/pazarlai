@@ -5,10 +5,12 @@ from ai_services.tag_generator_service.routing import tag_generator_router
 from ai_services.feature_extractor_service.routing import feature_extractor_router
 from ai_services.image_generator_service.routing import image_generation_router
 from fastapi.middleware.cors import CORSMiddleware
+
 from config.cloudinary_config import init_cloudinary
 
 
 app = FastAPI()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
