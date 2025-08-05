@@ -1,16 +1,8 @@
-import ApiClient from "./ApiClient";
+import { ImageApiClient } from "./ApiClient";
 
 export const uploadImage = async (formData) => {
     try {
-        const response = await ApiClient.post(
-            "/image/image-generation",
-            formData,
-            {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            }
-        );
+        const response = await ImageApiClient.post("/pazarlai", formData);
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;

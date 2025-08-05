@@ -78,17 +78,17 @@ export const homeFeatures = [
         color: "warning",
     },
     {
-        id: "poster-design",
-        icon: FiEdit3,
-        title: "Poster ve Reklam Önerileri",
+        id: "attribute-extraction",
+        icon: FiImage,
+        title: "Görsel Tabanlı Ürün Özellik Çıkarımı",
         description:
-            "Ürününüz için çekici poster tasarımları ve reklam stratejileri önerir.",
+            "Ürün görselinden kategori, renk, materyal gibi temel özellikleri otomatik algılar.",
         features: [
-            "Profesyonel poster tasarımı",
-            "Reklam metinleri",
-            "Görsel tutarlılık",
+            "Görselden kategori ve alt kategori tanıma",
+            "Ürünün fiziksel özelliklerini (renk, doku, form vb.) analiz etme",
+            "Ürüne özgü ayırt edici nitelikleri belirleme",
+            "Eksik bilgi durumunda önerilen özelliklerle tamamlama",
         ],
-        color: "info",
     },
 ];
 

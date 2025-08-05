@@ -43,9 +43,9 @@ const LoginPage = () => {
 
         try {
             const response = await loginUser(formData);
+            console.log("Login response:", response); // Debug için
             if (response.status === "success") {
-                localStorage.setItem("isLoggedIn", "true");
-                login(response.user);
+                login(); // Parametresiz çağır
                 navigate("/products");
             } else {
                 setErrors({ submit: "Geçersiz e-posta veya şifre" });

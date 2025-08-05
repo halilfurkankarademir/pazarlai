@@ -1,26 +1,21 @@
-from extensions import db
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, Integer, DateTime, ForeignKey, func
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID, JSONB
+from extensions import Base
 
 
-class Generation(db.Model):
+class Generation(Base):
     __tablename__ = 'generations'
 
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey(
+    id = Column(Integer, primary_key=True)
+    user_id = Column(PG_UUID(as_uuid=True), ForeignKey(
         'users.user_id'), nullable=False)
-    title = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.String(255), nullable=True)
-    category = db.Column(db.String(50), nullable=True)
-    price_suggestion = db.Column(db.Numeric(10, 2), nullable=True)
-    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    data = Column(JSONB, nullable=False)
+    created_at = Column(DateTime, default=func.current_timestamp())
 
     def to_dict(self):
         return {
             "id": self.id,
             "user_id": str(self.user_id),
-            "title": self.title,
-            "description": self.description,
-            "category": self.category,
-            "price_suggestion": str(self.price_suggestion) if self.price_suggestion else None,
+            "data": self.data,
             "created_at": self.created_at.isoformat() if self.created_at else None
         }

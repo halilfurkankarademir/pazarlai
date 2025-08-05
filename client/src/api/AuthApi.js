@@ -1,8 +1,8 @@
-import ApiClient from "./ApiClient";
+import { UserApiClient } from "./ApiClient";
 
 export const registerUser = async (userData) => {
     try {
-        const response = await ApiClient.post("/auth/register", userData);
+        const response = await UserApiClient.post("/auth/register", userData);
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
@@ -11,7 +11,7 @@ export const registerUser = async (userData) => {
 
 export const loginUser = async (userData) => {
     try {
-        const response = await ApiClient.post("/auth/login", userData);
+        const response = await UserApiClient.post("/auth/login", userData);
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;
@@ -20,7 +20,7 @@ export const loginUser = async (userData) => {
 
 export const logoutUser = async () => {
     try {
-        const response = await ApiClient.post("/auth/logout");
+        const response = await UserApiClient.post("/auth/logout");
         return response.data;
     } catch (error) {
         throw error.response ? error.response.data : error.message;

@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../api/AuthApi";
+import { AuthContext } from "../contexts/AuthContext";
 import {
     FiUser,
     FiMail,
@@ -14,6 +15,7 @@ import {
     FiZap,
     FiStar,
 } from "react-icons/fi";
+import { toast } from "react-toastify";
 
 const RegisterPage = () => {
     const [formData, setFormData] = useState({
@@ -26,6 +28,7 @@ const RegisterPage = () => {
     const [showPassword, setShowPassword] = useState(false);
 
     const navigate = useNavigate();
+    const { login } = useContext(AuthContext);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -45,9 +48,13 @@ const RegisterPage = () => {
         setErrors({});
 
         try {
-            await registerUser(formData);
-            localStorage.setItem("isLoggedIn", "true");
-            navigate("/products");
+            const response = await registerUser(formData);
+            if (response.status === "success") {
+                login();
+                navigate("/products");
+            } else {
+                setErrors({ submit: "Kayıt işlemi başarısız oldu" });
+            }
         } catch (error) {
             console.error("Kayıt hatası:", error);
             setErrors({ submit: "Kayıt olurken bir hata oluştu" });

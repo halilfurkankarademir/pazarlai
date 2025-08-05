@@ -1,14 +1,16 @@
-from extensions import db
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, Integer, ForeignKey, LargeBinary
+from sqlalchemy.dialects.postgresql import UUID as PG_UUID
+from extensions import Base
 
 
-class Image(db.Model):
+class Image(Base):
     __tablename__ = 'images'
-    id = db.Column(db.Integer, primary_key=True)
-    image = db.Column(db.LargeBinary, nullable=False)
-    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey(
+
+    id = Column(Integer, primary_key=True)
+    image = Column(LargeBinary, nullable=False)
+    user_id = Column(PG_UUID(as_uuid=True), ForeignKey(
         'users.user_id'), nullable=False)
-    generation_id = db.Column(db.Integer, nullable=False)
+    generation_id = Column(Integer, nullable=False)
 
     def to_dict(self):
         return {

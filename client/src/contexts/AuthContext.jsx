@@ -7,18 +7,21 @@ export const AuthProvider = ({ children }) => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        const isLoggedInLS = localStorage.getItem("isLoggedIn");
         const token = localStorage.getItem("access_token");
-        setIsLoggedIn(!!token);
+        setIsLoggedIn(isLoggedInLS === "true" || !!token);
         setIsLoading(false);
     }, []);
 
-    const login = (token) => {
-        localStorage.setItem("access_token", token);
+    const login = () => {
+        localStorage.setItem("isLoggedIn", "true");
         setIsLoggedIn(true);
+        setIsLoading(false);
     };
 
     const logout = () => {
         localStorage.removeItem("access_token");
+        localStorage.removeItem("isLoggedIn"); // Eski key'i de temizle
         setIsLoggedIn(false);
     };
 
