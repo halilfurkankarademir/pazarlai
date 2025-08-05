@@ -1,4 +1,8 @@
-# 🚀 Pazarlai - AI Destekli E-Ticaret İçerik Üretim Platformu
+<h1 align="center"> Pazarlai Ai Destekli Ürün Pazarlama Platformu </h1> <br>
+<p align="center">
+  <img width="512" height="256" alt="pazarlai (2)" src="https://github.com/user-attachments/assets/4e55800b-4efa-4e65-bcab-1710979d411b" />
+</p>
+
 
 ## 📋 Proje Hakkında
 
