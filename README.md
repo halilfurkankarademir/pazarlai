@@ -17,6 +17,7 @@
 -   **Akıllı Fiyat Önerisi**: Piyasa araştırması ve rekabet analizi ile optimal fiyat önerileri
 -   **Kategori Belirleme**: Ürünleri otomatik olarak doğru kategorilere yerleştirir
 -   **Hashtag Üretimi**: Platform bazlı hashtag önerileri
+-   **Özellik Çıkarımı**: Ürün özelliklerini otomatik olarak ürün görselinden analizi
 
 ### 📸 Görsel İşleme
 
